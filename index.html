@@ -3,86 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Grand Luxury Tree v17.6.5 - Pro Mobile</title>
+    <title>Luxury Christmas Tree v18.0 - iPhone Pro Max</title>
     <style>
-        /* 核心基础设置 */
-        body { margin: 0; overflow: hidden; background-color: #050505; font-family: 'Microsoft YaHei', sans-serif; -webkit-user-select: none; }
-        #canvas-container { width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; z-index: 1; }
+        body { margin: 0; overflow: hidden; background-color: #020205; font-family: 'PingFang SC', sans-serif; }
+        #canvas-container { width: 100vw; height: 100vh; }
         
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Great+Vibes&family=Ma+Shan+Zheng&display=swap');
-
-        /* UI 视觉：针对移动端优化了触摸区域 */
-        :root {
-            --glass-bg: rgba(20, 20, 25, 0.85);
-            --accent-gold: #d4af37;
-            --ui-scale: 0.85; 
+        /* 移动端奢华 UI 样式 */
+        .glass-ui {
+            position: absolute; padding: 15px; background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 15px; color: #d4af37;
+            z-index: 100; transition: all 0.3s;
         }
-
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            pointer-events: auto;
-        }
-
-        /* 顶部状态栏避让 */
-        #top-right-controls { position: absolute; top: env(safe-area-inset-top, 20px); right: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 50; }
         
-        #left-sidebar { 
-            position: absolute; top: 70px; left: 15px; width: 180px; 
-            max-height: 60vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; z-index: 20; 
-            transform: scale(var(--ui-scale)); transform-origin: top left;
-            transition: opacity 0.3s;
-        }
-
-        .elegant-btn {
-            background: rgba(212, 175, 55, 0.15); border: 1px solid var(--accent-gold);
-            color: #fff; padding: 10px; font-size: 12px; border-radius: 8px;
-            text-align: center; text-transform: uppercase;
-        }
-
-        /* 加载动画 */
-        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050505; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .spinner { width: 50px; height: 50px; border: 2px solid rgba(212, 175, 55, 0.2); border-top: 2px solid #d4af37; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #left-panel { top: 80px; left: 15px; width: 160px; display: flex; flex-direction: column; gap: 10px; }
+        #top-bar { top: env(safe-area-inset-top, 20px); right: 15px; display: flex; gap: 10px; }
         
-        #title-container { position: absolute; top: 15%; width: 100%; text-align: center; pointer-events: none; z-index: 5; }
-        .title-line { margin: 0; color: #fceea7; text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); font-size: 40px; }
+        .btn {
+            background: rgba(212, 175, 55, 0.2); border: 1px solid #d4af37;
+            color: white; padding: 8px; border-radius: 8px; font-size: 12px;
+            text-align: center; cursor: pointer; text-decoration: none;
+        }
 
-        /* 隐藏的原生摄像头预览，用于手势计算 */
-        #webcam-video { position: fixed; width: 100px; height: 75px; bottom: 10px; right: 10px; border: 1px solid gold; transform: scaleX(-1); border-radius: 5px; z-index: 100; background: #000; }
+        #loader { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #020205; z-index: 1000; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; 
+        }
+        .loading-ring { width: 60px; height: 60px; border: 3px solid rgba(212, 175, 55, 0.1); border-top: 3px solid #d4af37; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        input[type="file"] { display: none; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <div id="loader">
-    <div class="spinner"></div>
-    <div id="status-text" style="color: #d4af37; margin-top: 20px; font-size: 12px; letter-spacing: 2px;">初始化 3D 引擎与 AI 模型...</div>
+    <div class="loading-ring"></div>
+    <div style="color: #d4af37; margin-top: 25px; font-size: 14px; letter-spacing: 3px;">正在构建您的私人圣诞树...</div>
 </div>
 
-<div id="title-container">
-    <h1 id="display-line1" class="title-line" style="font-family: 'Cinzel';">Merry</h1>
-    <h1 id="display-line2" class="title-line" style="font-family: 'Great Vibes';">Christmas</h1>
+<div id="top-bar">
+    <label class="btn"> 📸 上传照片 <input type="file" id="photo-upload" accept="image/*" multiple> </label>
+    <div class="btn" onclick="toggleMusic()">🎵 音乐</div>
+</div>
+
+<div id="left-panel" class="glass-ui">
+    <div style="font-size: 11px; opacity: 0.8; margin-bottom: 5px;">手势感应状态</div>
+    <div id="gesture-status" style="font-weight: bold;">等待感应...</div>
+    <hr style="border: 0.5px solid rgba(212, 175, 55, 0.2); width: 100%;">
+    <div class="btn" onclick="setMode('TREE')">🎄 圣诞树形态</div>
+    <div class="btn" onclick="setMode('SCATTER')">✨ 浪漫星云</div>
+    <div style="font-size: 10px; color: #aaa; margin-top: 5px;">提示：双指捏合可抓取照片</div>
 </div>
 
 <div id="canvas-container"></div>
-
-<div id="top-right-controls">
-    <button class="elegant-btn glass-panel" onclick="toggleUI()">👁 隐藏界面</button>
-    <button class="elegant-btn glass-panel" onclick="toggleMusic()">🎵 播放音乐</button>
-</div>
-
-<div id="left-sidebar" class="glass-panel" style="padding: 15px;">
-    <div style="color:gold; font-size:14px; text-align:center; margin-bottom:10px;">场景控制</div>
-    <button class="elegant-btn" style="width:100%; margin-bottom:5px;" onclick="setMode('TREE')">🎄 聚合形态</button>
-    <button class="elegant-btn" style="width:100%; margin-bottom:5px;" onclick="setMode('SCATTER')">✨ 星云散开</button>
-    <div style="color:#aaa; font-size:10px; margin-top:10px;">手势提示：<br>捏合手指 -> 抓取照片<br>张开手掌 -> 散开粒子</div>
-</div>
-
-<video id="webcam-video" autoplay playsinline muted></video>
+<video id="webcam-video" autoplay playsinline muted style="display:none"></video>
 
 <script type="importmap">
     { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/", "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/+esm" } }
@@ -95,161 +72,194 @@
     import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
     import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
 
-    // 配置参数
-    const CONFIG = {
-        particleCount: 2500,
-        treeHeight: 22,
-        treeRadius: 8,
-        colors: { gold: 0xffd700, white: 0xffffff, bg: 0x050505 }
-    };
-
-    let scene, camera, renderer, composer, mainGroup, particles = [];
-    let handLandmarker, videoElement;
-    let mode = 'TREE';
-    let isMusicPlaying = false;
-    const bgm = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'); // 默认测试音乐
+    let scene, camera, renderer, composer, clock = new THREE.Clock();
+    let particles = [], photoObjects = [];
+    let handLandmarker, videoElement, mode = 'TREE';
+    let bgm = new Audio('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Kai_Engel/Chapter_One__Cold/Kai_Engel_-_04_-_Moonlight_Reprise.mp3'); // 舒缓古典背景
     bgm.loop = true;
 
     async function init() {
-        // 1. 初始化 Three.js 场景
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(CONFIG.colors.bg);
+        scene.fog = new THREE.FogExp2(0x020205, 0.015);
         
         camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 5, 45);
+        camera.position.set(0, 5, 50);
 
-        renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.toneMapping = THREE.ReinhardToneMapping;
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        mainGroup = new THREE.Group();
-        scene.add(mainGroup);
+        const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambient);
 
-        // 2. 创建豪华粒子系统
-        createParticles();
-        setupLights();
+        createLuxuryParticles();
         setupPostProcessing();
+        await setupAI();
 
-        // 3. 初始化 AI 手势识别
-        await initAI();
+        // 处理照片上传
+        document.getElementById('photo-upload').addEventListener('change', handleUpload);
 
-        document.getElementById('loader').style.opacity = '0';
-        setTimeout(() => document.getElementById('loader').classList.add('hidden'), 500);
-
+        document.getElementById('loader').style.display = 'none';
         animate();
     }
 
-    function setupLights() {
-        const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambient);
-        const point = new THREE.PointLight(0xffd700, 2, 50);
-        point.position.set(0, 10, 10);
-        scene.add(point);
-    }
+    function createLuxuryParticles() {
+        const group = new THREE.Group();
+        const geo = new THREE.SphereGeometry(0.15, 6, 6);
+        const mat = new THREE.MeshStandardMaterial({ 
+            color: 0xffd700, 
+            emissive: 0xffaa00,
+            emissiveIntensity: 0.5,
+            metalness: 1,
+            roughness: 0
+        });
 
-    function createParticles() {
-        const geo = new THREE.IcosahedronGeometry(0.2, 0);
-        const mat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2, emissive: 0x443300 });
-
-        for (let i = 0; i < CONFIG.particleCount; i++) {
+        for (let i = 0; i < 3000; i++) {
             const mesh = new THREE.Mesh(geo, mat);
             const p = {
                 mesh: mesh,
-                posTree: new THREE.Vector3(),
-                posScatter: new THREE.Vector3((Math.random()-0.5)*50, (Math.random()-0.5)*50, (Math.random()-0.5)*50),
-                speed: 0.03 + Math.random() * 0.05
+                treePos: getTreePos(i),
+                scatterPos: new THREE.Vector3().setFromSphericalCoords(
+                    20 + Math.random() * 20, 
+                    Math.random() * Math.PI, 
+                    Math.random() * Math.PI * 2
+                ),
+                speed: 0.02 + Math.random() * 0.04
             };
-
-            // 圣诞树数学模型
-            const t = Math.pow(Math.random(), 0.8);
-            const y = (t * CONFIG.treeHeight) - (CONFIG.treeHeight / 2);
-            const r = CONFIG.treeRadius * (1 - t) * (0.8 + Math.random() * 0.4);
-            const angle = t * 40 + Math.random() * Math.PI * 2;
-            p.posTree.set(Math.cos(angle) * r, y, Math.sin(angle) * r);
-
-            mesh.position.copy(p.posScatter);
-            mainGroup.add(mesh);
+            mesh.position.copy(p.scatterPos);
+            group.add(mesh);
             particles.push(p);
         }
+        scene.add(group);
+    }
+
+    function getTreePos(i) {
+        const h = 25;
+        const ratio = Math.pow(Math.random(), 1.2);
+        const y = ratio * h - h/2;
+        const r = (h/2 - y) * 0.35;
+        const angle = ratio * 50 + Math.random() * Math.PI * 2;
+        return new THREE.Vector3(Math.cos(angle)*r, y, Math.sin(angle)*r);
+    }
+
+    function handleUpload(e) {
+        const files = Array.from(e.target.files);
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const tex = new THREE.TextureLoader().load(event.target.result);
+                createPhotoMesh(tex);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function createPhotoMesh(texture) {
+        const geo = new THREE.PlaneGeometry(4, 5);
+        const mat = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+        const mesh = new THREE.Mesh(geo, mat);
+        
+        // 初始位置在树的随机位置
+        const angle = Math.random() * Math.PI * 2;
+        mesh.position.set(Math.cos(angle)*10, (Math.random()-0.5)*15, Math.sin(angle)*10);
+        mesh.lookAt(0,0,0);
+        
+        scene.add(mesh);
+        photoObjects.push({ 
+            mesh, 
+            originalPos: mesh.position.clone(),
+            state: 'IDLE' 
+        });
+    }
+
+    async function setupAI() {
+        videoElement = document.getElementById('webcam-video');
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        videoElement.srcObject = stream;
+        
+        const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
+        handLandmarker = await HandLandmarker.createFromOptions(vision, {
+            baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`, delegate: "GPU" },
+            runningMode: "VIDEO", numHands: 1
+        });
+        detectHand();
+    }
+
+    function detectHand() {
+        const results = handLandmarker.detectForVideo(videoElement, performance.now());
+        const status = document.getElementById('gesture-status');
+        
+        if (results.landmarks && results.landmarks.length > 0) {
+            const lm = results.landmarks[0];
+            const dist = Math.hypot(lm[4].x - lm[8].x, lm[4].y - lm[8].y);
+            
+            if (dist < 0.05) {
+                status.innerText = "👌 正在抓取...";
+                grabClosestPhoto();
+            } else {
+                status.innerText = "👋 已感应手掌";
+                releasePhotos();
+            }
+        } else {
+            status.innerText = "🔍 寻找手势...";
+        }
+        requestAnimationFrame(detectHand);
+    }
+
+    function grabClosestPhoto() {
+        if (photoObjects.length === 0) return;
+        // 抓取逻辑优化：将最近的照片移动到摄像机前
+        const target = photoObjects[0]; 
+        target.state = 'GRABBED';
+    }
+
+    function releasePhotos() {
+        photoObjects.forEach(p => p.state = 'IDLE');
     }
 
     function setupPostProcessing() {
         const renderPass = new RenderPass(scene, camera);
-        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.4, 0.85);
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
         composer = new EffectComposer(renderer);
         composer.addPass(renderPass);
         composer.addPass(bloomPass);
     }
 
-    async function initAI() {
-        videoElement = document.getElementById('webcam-video');
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-            videoElement.srcObject = stream;
-            
-            const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
-            handLandmarker = await HandLandmarker.createFromOptions(vision, {
-                baseOptions: { modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`, delegate: "GPU" },
-                runningMode: "VIDEO", numHands: 1
-            });
-            predict();
-        } catch (e) {
-            console.warn("Camera or AI load failed:", e);
-            document.getElementById('status-text').innerText = "手势初始化失败，请使用按钮控制";
-        }
-    }
-
-    let lastTime = -1;
-    function predict() {
-        if (videoElement.currentTime !== lastTime) {
-            const results = handLandmarker.detectForVideo(videoElement, performance.now());
-            if (results.landmarks && results.landmarks.length > 0) {
-                const lm = results.landmarks[0];
-                const distance = Math.hypot(lm[4].x - lm[8].x, lm[4].y - lm[8].y);
-                if (distance < 0.05) mode = 'TREE'; // 捏合
-                else if (distance > 0.15) mode = 'SCATTER'; // 张开
-            }
-            lastTime = videoElement.currentTime;
-        }
-        requestAnimationFrame(predict);
-    }
-
     function animate() {
         requestAnimationFrame(animate);
-        const time = Date.now() * 0.001;
+        const dt = clock.getDelta();
+        const time = clock.elapsedTime;
 
-        particles.forEach((p, i) => {
-            const target = (mode === 'TREE') ? p.posTree : p.posScatter;
-            p.mesh.position.lerp(target, p.speed);
-            p.mesh.rotation.y += 0.01;
-            if(mode === 'TREE') p.mesh.position.y += Math.sin(time + i) * 0.01;
+        particles.forEach(p => {
+            const dest = (mode === 'TREE') ? p.treePos : p.scatterPos;
+            p.mesh.position.lerp(dest, p.speed);
+            // 呼吸闪烁效果
+            p.mesh.material.emissiveIntensity = 0.5 + Math.sin(time * 3 + p.mesh.id) * 0.3;
         });
 
-        mainGroup.rotation.y += 0.005;
+        photoObjects.forEach(p => {
+            if (p.state === 'GRABBED') {
+                const cameraForward = new THREE.Vector3(0, 0, -15).applyQuaternion(camera.quaternion).add(camera.position);
+                p.mesh.position.lerp(cameraForward, 0.1);
+                p.mesh.lookAt(camera.position);
+            } else {
+                p.mesh.position.lerp(p.originalPos, 0.05);
+                p.mesh.rotation.y += 0.01;
+            }
+        });
+
+        scene.rotation.y += 0.002;
         composer.render();
     }
 
-    // 交互函数
+    window.toggleMusic = () => { bgm.paused ? bgm.play() : bgm.pause(); };
     window.setMode = (m) => mode = m;
-    window.toggleUI = () => {
-        const sidebar = document.getElementById('left-sidebar');
-        sidebar.style.opacity = sidebar.style.opacity === '0' ? '1' : '0';
-    };
-    window.toggleMusic = () => {
-        if (isMusicPlaying) bgm.pause();
-        else bgm.play().catch(e => alert("请点击屏幕以允许播放音乐"));
-        isMusicPlaying = !isMusicPlaying;
-    };
-
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        composer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    init();
+    window.init = init;
+    
+    // 首次点击启动
+    window.addEventListener('touchstart', () => { if(renderer) return; init(); }, { once: true });
 </script>
 </body>
 </html>
