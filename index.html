@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Grand Luxury Tree - Ultra v19.0</title>
+    <title>Luxury Christmas Tree v20.0 - US Pro Fixed</title>
     <style>
         :root { --gold: #d4af37; --bg: #020205; }
         body { margin: 0; overflow: hidden; background: var(--bg); font-family: -apple-system, sans-serif; color: white; -webkit-user-select: none; }
@@ -11,20 +11,20 @@
         #loading-screen { position: fixed; inset: 0; background: radial-gradient(circle at center, #1a1b3a 0%, var(--bg) 100%); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .loading-box { width: 300px; text-align: center; background: rgba(0,0,0,0.6); padding: 30px; border-radius: 20px; border: 1px solid rgba(212,175,55,0.2); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
         
-        #progress-num { font-size: 32px; font-weight: 200; color: var(--gold); margin-bottom: 10px; }
-        .progress-wrapper { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-        #progress-bar { width: 0%; height: 100%; background: var(--gold); box-shadow: 0 0 15px var(--gold); transition: width 0.3s; }
-        #loading-log { font-size: 9px; color: rgba(212,175,55,0.6); margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; min-height: 12px; }
+        #progress-num { font-size: 36px; font-weight: 200; color: var(--gold); margin-bottom: 5px; }
+        .progress-wrapper { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; position: relative; }
+        #progress-bar { width: 0%; height: 100%; background: var(--gold); box-shadow: 0 0 15px var(--gold); transition: width 0.4s cubic-bezier(0.1, 0, 0.3, 1); }
+        #loading-log { font-size: 10px; color: rgba(212,175,55,0.7); margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; min-height: 14px; }
 
-        .start-btn { display: none; background: var(--gold); color: black; border: none; padding: 18px 45px; font-size: 16px; font-weight: bold; border-radius: 40px; cursor: pointer; margin-top: 20px; box-shadow: 0 0 30px rgba(212,175,55,0.5); -webkit-tap-highlight-color: transparent; }
+        .start-btn { display: none; background: var(--gold); color: black; border: none; padding: 20px 50px; font-size: 16px; font-weight: bold; border-radius: 40px; cursor: pointer; margin-top: 20px; box-shadow: 0 0 30px rgba(212,175,55,0.5); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
         #canvas-container { position: absolute; inset: 0; z-index: 1; }
-        .ui-panel { position: absolute; z-index: 100; pointer-events: none; }
-        #top-ui { top: env(safe-area-inset-top, 20px); right: 20px; display: flex; gap: 10px; }
-        .glass-btn { pointer-events: auto; background: rgba(15,15,25,0.8); border: 1px solid rgba(255,255,255,0.1); color: gold; padding: 12px 18px; border-radius: 15px; font-size: 13px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        #ui-layer { position: absolute; top: env(safe-area-inset-top, 20px); right: 20px; z-index: 100; display: flex; gap: 10px; pointer-events: none; }
+        .glass-btn { pointer-events: auto; background: rgba(15,15,25,0.8); border: 1px solid rgba(255,255,255,0.1); color: var(--gold); padding: 12px 18px; border-radius: 15px; font-size: 13px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
         
-        #gesture-hint { position: fixed; bottom: 40px; width: 100%; text-align: center; font-size: 11px; color: var(--gold); z-index: 100; opacity: 0.8; pointer-events: none; }
-        #v-preview { position: fixed; bottom: 20px; right: 20px; width: 80px; height: 110px; border: 1px solid var(--gold); border-radius: 10px; transform: scaleX(-1); object-fit: cover; z-index: 50; display: none; }
+        #v-preview { position: fixed; bottom: 20px; right: 20px; width: 85px; height: 115px; border: 1.5px solid var(--gold); border-radius: 12px; transform: scaleX(-1); object-fit: cover; z-index: 50; display: none; background: #000; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        #gesture-hint { position: fixed; bottom: 40px; width: 100%; text-align: center; color: var(--gold); font-size: 11px; z-index: 100; text-shadow: 0 0 10px #000; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -33,17 +33,17 @@
     <div class="loading-box">
         <div id="progress-num">0%</div>
         <div class="progress-wrapper"><div id="progress-bar"></div></div>
-        <div id="loading-log">系统预热中...</div>
+        <div id="loading-log">READY</div>
         <button id="start-node" class="start-btn" onclick="activateSystem()">ENTER 3D SPACE</button>
     </div>
 </div>
 
-<div id="top-ui" class="ui-panel">
+<div id="ui-layer">
     <label class="glass-btn">📸 添加照片<input type="file" id="photo-in" accept="image/*" multiple hidden></label>
     <div class="glass-btn" onclick="toggleAudio()">🎵 音乐</div>
 </div>
 
-<div id="gesture-hint">手势：捏合手指抓取照片 | 张开手掌散开星云</div>
+<div id="gesture-hint">提示：捏合手指抓取照片 | 张开手掌散开星云</div>
 
 <div id="canvas-container"></div>
 <video id="v-preview" autoplay playsinline muted></video>
@@ -65,21 +65,21 @@
     const bgm = new Audio('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Kai_Engel/Chapter_One__Cold/Kai_Engel_-_04_-_Moonlight_Reprise.mp3');
     bgm.loop = true;
 
-    const log = (msg) => document.getElementById('loading-log').innerText = msg;
-    const updateProgress = (n) => {
-        document.getElementById('progress-bar').style.width = n + '%';
-        document.getElementById('progress-num').innerText = n + '%';
+    const updateStatus = (pct, msg) => {
+        document.getElementById('progress-bar').style.width = pct + '%';
+        document.getElementById('progress-num').innerText = pct + '%';
+        document.getElementById('loading-log').innerText = msg;
     };
 
-    async function bootstrap() {
+    async function loadEngine() {
         try {
-            updateProgress(20); log("正在加载 3D 渲染引擎...");
+            updateStatus(15, "正在初始化 3D 引擎...");
             initThree();
 
-            updateProgress(50); log("正在连接美国 AI 模型服务器...");
+            updateStatus(40, "连接美国模型服务器...");
             const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
             
-            updateProgress(80); log("下载神经网络指令集 (15MB)...");
+            updateStatus(75, "下载 AI 神经网络 (15MB)...");
             handLandmarker = await HandLandmarker.createFromOptions(vision, {
                 baseOptions: { 
                     modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
@@ -88,39 +88,41 @@
                 runningMode: "VIDEO", numHands: 1
             });
 
-            updateProgress(100); log("系统就绪");
+            updateStatus(100, "准备就绪");
             document.getElementById('start-node').style.display = 'inline-block';
         } catch (e) {
-            log("网络抖动，请刷新重试");
+            updateStatus(0, "网络超时，请刷新页面");
             console.error(e);
         }
     }
 
     window.activateSystem = async () => {
+        video = document.getElementById('v-preview');
+        updateStatus(100, "正在唤起相机窗口...");
+        
         try {
-            log("正在唤醒摄像头...");
-            video = document.getElementById('v-preview');
-            // 关键：专门针对 iOS 的流获取
+            // 针对 iOS 优化：先尝试获取流，再进行 3D 显示
             const stream = await navigator.mediaDevices.getUserMedia({ 
                 audio: false, 
-                video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } } 
+                video: { facingMode: "user", width: 640, height: 480 } 
             });
             video.srcObject = stream;
+            
+            // 确保视频开始播放后才隐藏加载层
             video.onloadedmetadata = () => {
                 video.play();
                 video.style.display = "block";
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 600);
             };
 
-            await bgm.play();
-            
-            document.getElementById('loading-screen').style.opacity = '0';
-            setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 600);
+            await bgm.play().catch(()=>{}); 
             
             runAI();
             animate();
         } catch (err) {
-            alert("请确保在弹出窗口点击'允许访问摄像头'");
-            log("权限遭拒");
+            alert("请点击“允许访问摄像头”，如未弹出请检查 Safari 设置。");
+            console.error(err);
         }
     };
 
@@ -137,7 +139,8 @@
         mainGroup = new THREE.Group();
         scene.add(mainGroup);
 
-        const geos = [new THREE.IcosahedronGeometry(0.15), new THREE.BoxGeometry(0.12, 0.12, 0.12), new THREE.OctahedronGeometry(0.2)];
+        // 粒子多样化：引入不同几何形状
+        const geos = [new THREE.IcosahedronGeometry(0.18, 0), new THREE.BoxGeometry(0.12, 0.12, 0.12), new THREE.OctahedronGeometry(0.22, 0)];
         const mat = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xaa8800, metalness: 1, roughness: 0.1 });
 
         for (let i = 0; i < 3000; i++) {
@@ -157,7 +160,7 @@
         }
 
         scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-        const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+        const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.6, 0.4, 0.85);
         composer = new EffectComposer(renderer);
         composer.addPass(new RenderPass(scene, camera));
         composer.addPass(bloom);
@@ -168,7 +171,7 @@
                 reader.onload = (ev) => {
                     const tex = new THREE.TextureLoader().load(ev.target.result);
                     const m = new THREE.Mesh(new THREE.PlaneGeometry(6, 8), new THREE.MeshBasicMaterial({ map: tex, side: 2 }));
-                    m.position.set((Math.random()-0.5)*30, (Math.random()-0.5)*20, (Math.random()-0.5)*15);
+                    m.position.set((Math.random()-0.5)*35, (Math.random()-0.5)*25, (Math.random()-0.5)*15);
                     scene.add(m);
                     photos.push({ m, orig: m.position.clone() });
                 };
@@ -182,7 +185,7 @@
             const res = handLandmarker.detectForVideo(video, performance.now());
             if (res.landmarks?.length > 0) {
                 const d = Math.hypot(res.landmarks[0][4].x - res.landmarks[0][8].x, res.landmarks[0][4].y - res.landmarks[0][8].y);
-                mode = (d < 0.06) ? 'GRAB' : 'TREE';
+                mode = (d < 0.055) ? 'GRAB' : 'TREE';
             }
         }
         requestAnimationFrame(runAI);
@@ -194,16 +197,17 @@
         particles.forEach((p, i) => {
             const target = (mode === 'GRAB') ? p.scatter : p.tree;
             p.mesh.position.lerp(target, 0.06);
-            p.mesh.rotation.y += 0.01;
-            p.mesh.scale.setScalar(1 + Math.sin(t * 2 + i) * 0.1);
+            p.mesh.rotation.x += 0.01;
+            p.mesh.scale.setScalar(1 + Math.sin(t * 2.5 + i) * 0.12);
         });
         photos.forEach(p => {
             if (mode === 'GRAB') {
                 const target = new THREE.Vector3(0,0,-18).applyQuaternion(camera.quaternion).add(camera.position);
-                p.m.position.lerp(target, 0.1);
+                p.m.position.lerp(target, 0.12);
                 p.m.lookAt(camera.position);
             } else {
                 p.m.position.lerp(p.orig, 0.05);
+                p.m.rotation.y += 0.01;
             }
         });
         mainGroup.rotation.y += 0.003;
@@ -218,7 +222,7 @@
         composer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    bootstrap();
+    loadEngine();
 </script>
 </body>
 </html>
