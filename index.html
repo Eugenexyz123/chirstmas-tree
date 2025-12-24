@@ -3,51 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Luxury Tree - iOS Pro Fixed</title>
+    <title>Grand Luxury Tree - Enterprise v18.5</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #020205; font-family: -apple-system, sans-serif; }
-        #canvas-container { width: 100vw; height: 100vh; position: absolute; top:0; left:0; z-index: 1; }
-        
-        /* 启动覆盖层：解决 iOS 权限锁死问题 */
-        #start-overlay {
-            position: fixed; top:0; left:0; width:100%; height:100%; 
-            background: radial-gradient(circle, #1a1a2e 0%, #020205 100%);
-            z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        :root {
+            --accent: #d4af37;
+            --bg: #020205;
+            --panel: rgba(15, 15, 25, 0.85);
         }
+        body { margin: 0; overflow: hidden; background-color: var(--bg); font-family: -apple-system, system-ui, sans-serif; color: white; -webkit-user-select: none; }
         
+        /* 1. 强制启动层：解决 iOS 权限与弹窗问题 */
+        #auth-overlay {
+            position: fixed; inset: 0; background: radial-gradient(circle at center, #1a1b3a 0%, var(--bg) 100%);
+            z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.6s ease;
+        }
+        .auth-card { text-align: center; padding: 40px; border-radius: 30px; border: 1px solid rgba(212, 175, 55, 0.3); background: var(--panel); backdrop-filter: blur(20px); }
         .start-btn {
-            padding: 20px 40px; font-size: 18px; color: #d4af37;
-            background: rgba(212, 175, 55, 0.1); border: 2px solid #d4af37;
-            border-radius: 50px; cursor: pointer; letter-spacing: 2px;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            background: var(--accent); color: black; border: none; padding: 18px 40px; 
+            font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4); margin-top: 20px;
         }
 
-        /* 顶部 UI */
-        #ui-layer { position: absolute; top: env(safe-area-inset-top, 20px); width: 100%; display: flex; justify-content: space-between; padding: 0 15px; box-sizing: border-box; z-index: 100; pointer-events: none; }
-        .glass-btn { pointer-events: auto; padding: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid gold; border-radius: 12px; color: gold; font-size: 12px; }
+        /* 2. 进度条 UI */
+        #loading-container { width: 240px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 20px; overflow: hidden; display: none; }
+        #loading-bar { width: 0%; height: 100%; background: var(--accent); transition: width 0.3s; }
+        #status-text { font-size: 10px; color: var(--accent); margin-top: 8px; letter-spacing: 2px; text-transform: uppercase; }
 
-        #status-info { position: fixed; bottom: 30px; width: 100%; text-align: center; color: gold; font-size: 10px; z-index: 100; opacity: 0.7; }
-        video#webcam-video { position: fixed; bottom: 10px; right: 10px; width: 80px; height: 60px; border: 1px solid gold; border-radius: 8px; transform: scaleX(-1); z-index: 50; background: #000; }
+        /* 3. 主 UI 界面 */
+        #canvas-container { position: absolute; inset: 0; z-index: 1; }
+        .ui-panel { position: absolute; z-index: 100; pointer-events: none; }
+        #top-bar { top: env(safe-area-inset-top, 20px); right: 20px; display: flex; gap: 12px; }
+        #side-menu { bottom: 40px; left: 20px; display: flex; flex-direction: column; gap: 10px; }
         
-        .hidden { display: none !important; }
+        .glass-btn {
+            pointer-events: auto; background: var(--panel); border: 1px solid rgba(255,255,255,0.1);
+            color: white; padding: 12px 18px; border-radius: 15px; font-size: 13px;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; gap: 8px;
+        }
+        .glass-btn i { color: var(--accent); }
+
+        #webcam-preview {
+            position: fixed; bottom: 20px; right: 20px; width: 90px; height: 120px; 
+            border-radius: 12px; border: 1px solid var(--accent); background: black;
+            transform: scaleX(-1); object-fit: cover; z-index: 50; display: none;
+        }
     </style>
 </head>
 <body>
 
-<div id="start-overlay">
-    <div style="color: #d4af37; margin-bottom: 30px; font-size: 24px; font-weight: 200;">GOLDEN CHRISTMAS</div>
-    <button class="start-btn" onclick="startExperience()">点击开启 3D 交互之旅</button>
-    <p style="color: #666; margin-top: 20px; font-size: 12px;">建议在静音开关关闭的状态下使用</p>
+<div id="auth-overlay">
+    <div class="auth-card">
+        <div style="font-size: 28px; letter-spacing: 5px; color: var(--accent); margin-bottom: 10px;">LUXURY TREE</div>
+        <div style="font-size: 12px; opacity: 0.6; margin-bottom: 20px;">V18.5 ENTERPRISE EDITION</div>
+        <button class="start-btn" onclick="requestPermissions()">进入 3D 交互空间</button>
+        <div id="loading-container"><div id="loading-bar"></div></div>
+        <div id="status-text">等待指令</div>
+    </div>
 </div>
 
-<div id="ui-layer">
-    <label class="glass-btn">📸 上传照片<input type="file" id="photo-upload" accept="image/*" multiple hidden></label>
-    <div class="glass-btn" onclick="toggleBGM()">🎵 音乐开关</div>
+<div id="top-bar" class="ui-panel">
+    <label class="glass-btn"><i>📷</i> 上传照片<input type="file" id="photo-input" accept="image/*" multiple hidden></label>
+    <div class="glass-btn" onclick="toggleMusic()"><i>🎵</i> 音乐</div>
 </div>
 
-<div id="status-info">系统状态：等待启动</div>
+<div id="side-menu" class="ui-panel">
+    <div class="glass-btn" onclick="setMode('TREE')">🎄 圣诞形态</div>
+    <div class="glass-btn" onclick="setMode('SCATTER')">✨ 浪漫星云</div>
+    <div id="gesture-indicator" style="font-size: 9px; color: var(--accent); text-align: center; margin-top: 5px;">手势：未激活</div>
+</div>
+
+<video id="webcam-preview" autoplay playsinline muted></video>
 <div id="canvas-container"></div>
-<video id="webcam-video" autoplay playsinline muted></video>
 
 <script type="importmap">
     { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/", "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/+esm" } }
@@ -60,140 +87,180 @@
     import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
     import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
 
-    let scene, camera, renderer, composer, particles = [], photos = [], handLandmarker;
-    let videoElement, mode = 'TREE';
+    let scene, camera, renderer, composer, particles = [], photos = [], mainGroup;
+    let handLandmarker, videoElement, mode = 'TREE';
     const bgm = new Audio('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Kai_Engel/Chapter_One__Cold/Kai_Engel_-_04_-_Moonlight_Reprise.mp3');
     bgm.loop = true;
 
-    // 暴露给全局按钮
-    window.startExperience = async function() {
-        const info = document.getElementById('status-info');
-        info.innerText = "正在请求授权...";
+    // 核心：iOS 权限请求函数
+    window.requestPermissions = async function() {
+        const bar = document.getElementById('loading-bar');
+        const container = document.getElementById('loading-container');
+        const status = document.getElementById('status-text');
         
+        container.style.display = 'block';
+        status.innerText = "正在请求相机权限...";
+        bar.style.width = "10%";
+
         try {
-            // 1. 同时请求音频和视频授权
-            await bgm.play(); 
-            videoElement = document.getElementById('webcam-video');
+            // 1. 同时请求相机与音频
+            videoElement = document.getElementById('webcam-preview');
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
             videoElement.srcObject = stream;
+            videoElement.style.display = "block";
+            await bgm.play(); // 解锁音频
 
-            // 2. 初始化 3D 和 AI
-            document.getElementById('start-overlay').style.display = 'none';
-            initScene();
-            await initAI();
+            // 2. 加载 MediaPipe 模型
+            status.innerText = "初始化 AI 引擎 (30%)...";
+            bar.style.width = "30%";
+            const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
+            
+            status.innerText = "下载神经网络模型 (70%)...";
+            bar.style.width = "70%";
+            handLandmarker = await HandLandmarker.createFromOptions(vision, {
+                baseOptions: { 
+                    modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+                    delegate: "GPU" 
+                },
+                runningMode: "VIDEO", numHands: 1
+            });
+
+            bar.style.width = "100%";
+            status.innerText = "启动完成";
+            
+            setTimeout(() => {
+                document.getElementById('auth-overlay').style.opacity = '0';
+                setTimeout(() => document.getElementById('auth-overlay').style.display='none', 600);
+                initApp();
+            }, 500);
+
         } catch (err) {
-            alert("请在弹窗中选择‘允许访问摄像头’，并确保手机未处于静音模式");
+            status.innerText = "错误：请务必允许相机权限";
             console.error(err);
         }
     };
 
-    function initScene() {
+    function initApp() {
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 5, 45);
+        camera.position.set(0, 5, 50);
 
         renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // 创建豪华粒子
-        const group = new THREE.Group();
-        const geo = new THREE.IcosahedronGeometry(0.15, 0);
-        const mat = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffaa00, metalness: 1 });
+        mainGroup = new THREE.Group();
+        scene.add(mainGroup);
 
-        for (let i = 0; i < 2500; i++) {
+        // 优化：多样化粒子系统 (引入不同几何形状)
+        const geometries = [
+            new THREE.IcosahedronGeometry(0.15, 0), // 碎钻
+            new THREE.BoxGeometry(0.12, 0.12, 0.12), // 方晶
+            new THREE.OctahedronGeometry(0.18, 0) // 星芒
+        ];
+        
+        const mat = new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xaa8800, metalness: 1, roughness: 0.1 });
+
+        for (let i = 0; i < 3000; i++) {
+            const geo = geometries[Math.floor(Math.random() * geometries.length)];
             const mesh = new THREE.Mesh(geo, mat);
-            const ratio = Math.pow(Math.random(), 1.2);
-            const y = ratio * 22 - 11;
-            const r = (11 - y) * 0.35;
-            const angle = ratio * 40 + Math.random() * Math.PI * 2;
             
+            const ratio = Math.pow(Math.random(), 1.2);
+            const y = ratio * 24 - 12;
+            const r = (12 - y) * 0.35;
+            const angle = ratio * 45 + Math.random() * Math.PI * 2;
+
             const p = {
                 mesh,
                 treePos: new THREE.Vector3(Math.cos(angle)*r, y, Math.sin(angle)*r),
-                scatterPos: new THREE.Vector3().setFromSphericalCoords(20 + Math.random()*15, Math.random()*Math.PI, Math.random()*Math.PI*2)
+                scatterPos: new THREE.Vector3().setFromSphericalCoords(25 + Math.random()*15, Math.random()*Math.PI, Math.random()*Math.PI*2),
+                speed: 0.03 + Math.random() * 0.04
             };
             mesh.position.copy(p.scatterPos);
-            group.add(mesh);
+            mainGroup.add(mesh);
             particles.push(p);
         }
-        scene.add(group);
-        scene.add(new THREE.AmbientLight(0xffffff, 0.8));
 
-        // 后期辉光
+        scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+        const pointLight = new THREE.PointLight(0xffd700, 2, 50);
+        pointLight.position.set(0, 10, 10);
+        scene.add(pointLight);
+
         const renderPass = new RenderPass(scene, camera);
         const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
         composer = new EffectComposer(renderer);
         composer.addPass(renderPass);
         composer.addPass(bloomPass);
 
+        // 图片上传处理
+        document.getElementById('photo-input').addEventListener('change', (e) => {
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const tex = new THREE.TextureLoader().load(ev.target.result);
+                    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(6, 7.5), new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide }));
+                    mesh.position.set((Math.random()-0.5)*20, (Math.random()-0.5)*15, (Math.random()-0.5)*10);
+                    scene.add(mesh);
+                    photos.push({ mesh, origPos: mesh.position.clone() });
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        runAI();
         animate();
     }
 
-    async function initAI() {
-        const info = document.getElementById('status-info');
-        info.innerText = "AI 模型加载中 (约 10 秒)...";
-        const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
-        handLandmarker = await HandLandmarker.createFromOptions(vision, {
-            baseOptions: { 
-                modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
-                delegate: "GPU" 
-            },
-            runningMode: "VIDEO", numHands: 1
-        });
-        info.innerText = "系统运行中 | 手势已激活";
-        detectHand();
-    }
-
-    function detectHand() {
+    function runAI() {
         if (handLandmarker && videoElement.readyState >= 2) {
             const results = handLandmarker.detectForVideo(videoElement, performance.now());
+            const indicator = document.getElementById('gesture-indicator');
             if (results.landmarks?.length > 0) {
                 const dist = Math.hypot(results.landmarks[0][4].x - results.landmarks[0][8].x, results.landmarks[0][4].y - results.landmarks[0][8].y);
-                mode = (dist < 0.05) ? 'GRAB' : 'TREE';
+                if (dist < 0.05) {
+                    mode = 'FOCUS';
+                    indicator.innerText = "手势：抓取图片";
+                } else if (dist > 0.15) {
+                    mode = 'SCATTER';
+                    indicator.innerText = "手势：星云散开";
+                } else {
+                    mode = 'TREE';
+                    indicator.innerText = "手势：圣诞形态";
+                }
             }
         }
-        requestAnimationFrame(detectHand);
+        requestAnimationFrame(runAI);
     }
 
     function animate() {
         requestAnimationFrame(animate);
-        particles.forEach(p => {
-            const target = (mode === 'GRAB') ? p.scatterPos : p.treePos;
-            p.mesh.position.lerp(target, 0.06);
-        });
+        const time = Date.now() * 0.001;
         
+        particles.forEach((p, i) => {
+            const target = (mode === 'TREE') ? p.treePos : p.scatterPos;
+            p.mesh.position.lerp(target, p.speed);
+            p.mesh.rotation.x += 0.01;
+            p.mesh.scale.setScalar(1 + Math.sin(time * 2 + i) * 0.1);
+        });
+
         photos.forEach(p => {
-            if (mode === 'GRAB') {
-                const camForward = new THREE.Vector3(0,0,-15).applyQuaternion(camera.quaternion).add(camera.position);
-                p.mesh.position.lerp(camPos, 0.1);
+            if (mode === 'FOCUS') {
+                const targetPos = new THREE.Vector3(0,0,-18).applyQuaternion(camera.quaternion).add(camera.position);
+                p.mesh.position.lerp(targetPos, 0.1);
                 p.mesh.lookAt(camera.position);
             } else {
                 p.mesh.position.lerp(p.origPos, 0.05);
+                p.mesh.rotation.y += 0.005;
             }
         });
 
+        mainGroup.rotation.y += 0.003;
         composer.render();
     }
 
-    // 处理图片上传
-    document.getElementById('photo-upload').addEventListener('change', (e) => {
-        const files = Array.from(e.target.files);
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                const tex = new THREE.TextureLoader().load(ev.target.result);
-                const mesh = new THREE.Mesh(new THREE.PlaneGeometry(6, 7), new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide }));
-                mesh.position.set((Math.random()-0.5)*20, (Math.random()-0.5)*15, (Math.random()-0.5)*10);
-                scene.add(mesh);
-                photos.push({ mesh, origPos: mesh.position.clone() });
-            };
-            reader.readAsDataURL(file);
-        });
-    });
-
-    window.toggleBGM = () => { bgm.paused ? bgm.play() : bgm.pause(); };
+    window.toggleMusic = () => { bgm.paused ? bgm.play() : bgm.pause(); };
+    window.setMode = (m) => mode = m;
 </script>
 </body>
 </html>
