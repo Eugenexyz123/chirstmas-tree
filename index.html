@@ -3,50 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Grand Luxury Tree v21.0 - Professional Studio</title>
+    <title>Golden Luxury Christmas Tree v21.0</title>
     <style>
-        :root { --gold: #d4af37; --bg: #050505; }
-        body { margin: 0; overflow: hidden; background: var(--bg); font-family: -apple-system, "Helvetica Neue", sans-serif; color: white; -webkit-user-select: none; }
-        
-        /* 奢华启动层 */
-        #loading-screen { position: fixed; inset: 0; background: radial-gradient(circle at center, #1a1b3a 0%, var(--bg) 100%); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease; }
-        .loading-box { width: 320px; text-align: center; background: rgba(0,0,0,0.7); padding: 40px; border-radius: 24px; border: 1px solid rgba(212,175,55,0.3); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        
-        #progress-num { font-size: 42px; font-weight: 200; color: var(--gold); margin-bottom: 5px; font-variant-numeric: tabular-nums; }
-        .progress-wrapper { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin: 20px 0; }
-        #progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, transparent, var(--gold)); box-shadow: 0 0 15px var(--gold); transition: width 0.4s ease; }
-        #loading-log { font-size: 10px; color: rgba(212,175,55,0.6); text-transform: uppercase; letter-spacing: 2px; }
+        :root { --gold: #d4af37; --bg: #0a0a0c; --ui-glass: rgba(15, 15, 20, 0.75); }
+        body { margin: 0; overflow: hidden; background: var(--bg); font-family: -apple-system, sans-serif; color: white; }
 
-        .start-btn { display: none; background: var(--gold); color: black; border: none; padding: 20px 60px; font-size: 16px; font-weight: bold; border-radius: 40px; cursor: pointer; margin-top: 10px; box-shadow: 0 0 30px rgba(212,175,55,0.4); text-transform: uppercase; letter-spacing: 2px; }
+        /* 参照图：加载界面优化 */
+        #loading-screen {
+            position: fixed; inset: 0; background: radial-gradient(circle at center, #1a1b3a 0%, var(--bg) 100%);
+            z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .loading-card {
+            width: 280px; padding: 30px; background: var(--ui-glass); border-radius: 24px;
+            border: 1px solid rgba(212, 175, 55, 0.4); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            text-align: left; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+        #progress-val { font-size: 38px; font-weight: 200; color: var(--gold); line-height: 1; }
+        .bar-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 20px 0; overflow: hidden; }
+        #bar-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #8a6d3b, #fceea7, #d4af37); box-shadow: 0 0 15px var(--gold); transition: width 0.4s; }
+        #log-text { font-size: 10px; color: rgba(212, 175, 55, 0.6); text-transform: uppercase; letter-spacing: 1.5px; }
 
-        /* 界面 UI 优化 */
-        #ui-layer { position: absolute; top: env(safe-area-inset-top, 20px); right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 12px; pointer-events: none; }
-        .glass-btn { pointer-events: auto; background: rgba(20,20,30,0.8); border: 1px solid rgba(212,175,55,0.4); color: var(--gold); padding: 12px 20px; border-radius: 30px; font-size: 13px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .enter-btn {
+            display: none; background: linear-gradient(135deg, #fceea7, #d4af37); color: #221a05;
+            border: none; padding: 18px 45px; font-size: 14px; font-weight: 700; border-radius: 40px;
+            cursor: pointer; margin-top: 25px; width: 100%; letter-spacing: 1px;
+        }
 
-        #v-preview { position: fixed; bottom: 30px; right: 25px; width: 90px; height: 120px; border: 2px solid var(--gold); border-radius: 16px; transform: scaleX(-1); object-fit: cover; z-index: 50; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.8); background: #000; }
-        #hint-text { position: fixed; bottom: 40px; width: 100%; text-align: center; color: var(--gold); font-size: 12px; font-weight: 300; letter-spacing: 1px; z-index: 10; pointer-events: none; opacity: 0.8; }
+        /* 参照图：顶部 UI 布局 */
+        #ui-layer { position: absolute; top: env(safe-area-inset-top, 20px); right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+        .btn-glass {
+            pointer-events: auto; padding: 10px 18px; background: var(--ui-glass);
+            border: 1.5px solid rgba(212, 175, 55, 0.5); border-radius: 20px; color: #fceea7;
+            font-size: 12px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        #v-preview {
+            position: fixed; bottom: 25px; right: 25px; width: 100px; height: 130px;
+            border: 2px solid var(--gold); border-radius: 16px; transform: scaleX(-1);
+            object-fit: cover; z-index: 50; display: none; background: #000; box-shadow: 0 0 30px rgba(0,0,0,1);
+        }
+
+        #canvas-container { position: absolute; inset: 0; z-index: 1; }
     </style>
 </head>
 <body>
 
 <div id="loading-screen">
-    <div class="loading-box">
-        <div id="progress-num">0%</div>
-        <div class="progress-wrapper"><div id="progress-bar"></div></div>
-        <div id="loading-log">INITIALIZING</div>
-        <button id="start-node" class="start-btn" onclick="activateSystem()">Enter 3D Space</button>
+    <div class="loading-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <div><div style="font-size:10px; opacity:0.6;">progress</div><div id="progress-val">0%</div></div>
+            <div style="font-size:10px; opacity:0.6; padding-bottom:5px;">TREE MODE</div>
+        </div>
+        <div class="bar-container"><div id="bar-fill"></div></div>
+        <div id="log-text">SYSTEM INITIALIZING...</div>
+        <button id="enter-node" class="enter-btn" onclick="activateApp()">ENTER 3D SPACE</button>
     </div>
 </div>
 
 <div id="ui-layer">
-    <label class="glass-btn">📸 添加照片吊坠<input type="file" id="photo-in" accept="image/*" multiple hidden></label>
-    <div class="glass-btn" onclick="toggleAudio()">🎵 播放节日音乐</div>
+    <label class="btn-glass">📸 添加照片库 <input type="file" id="pic-up" accept="image/*" multiple hidden></label>
+    <div class="btn-glass" id="music-btn" onclick="handleMusic()">🎵 播放节日音乐</div>
 </div>
 
-<div id="hint-text">捏合手指抓取照片 | 张开手掌散开星云</div>
-
+<div id="canvas-container"></div>
 <video id="v-preview" autoplay playsinline muted></video>
-<div id="canvas-container" style="position: absolute; inset:0;"></div>
 
 <script type="importmap">
     { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/", "@mediapipe/tasks-vision": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/+esm" } }
@@ -60,27 +81,29 @@
     import { FilesetResolver, HandLandmarker } from '@mediapipe/tasks-vision';
 
     let scene, camera, renderer, composer, clock = new THREE.Clock();
-    let particles = [], photoObjects = [], mainGroup;
-    let handLandmarker, videoElement, mode = 'TREE';
+    let particles = [], photoGroup = new THREE.Group(), mainTreeGroup = new THREE.Group();
+    let landmarker, video, mode = 'TREE';
     
-    // 音乐优化：舒缓圣诞乐
+    // 音乐优化：舒缓节日版本
     const bgm = new Audio('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Kai_Engel/Chapter_One__Cold/Kai_Engel_-_04_-_Moonlight_Reprise.mp3');
     bgm.loop = true;
 
-    const updateStatus = (pct, msg) => {
-        document.getElementById('progress-bar').style.width = pct + '%';
-        document.getElementById('progress-num').innerText = pct + '%';
-        document.getElementById('loading-log').innerText = msg;
+    const setStatus = (p, m) => {
+        document.getElementById('bar-fill').style.width = p + '%';
+        document.getElementById('progress-val').innerText = p + '%';
+        document.getElementById('log-text').innerText = m;
     };
 
     async function init() {
         try {
-            updateStatus(20, "构建 3D 渲染器...");
+            setStatus(20, "LOADING HDR ENGINE...");
             setupThree();
 
-            updateStatus(50, "加载 AI 神经网络...");
+            setStatus(50, "FETCHING NEURAL MODELS...");
             const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
-            handLandmarker = await HandLandmarker.createFromOptions(vision, {
+            
+            setStatus(80, "CALIBRATING HAND SENSORS...");
+            landmarker = await HandLandmarker.createFromOptions(vision, {
                 baseOptions: { 
                     modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
                     delegate: "GPU" 
@@ -88,144 +111,116 @@
                 runningMode: "VIDEO", numHands: 1
             });
 
-            updateStatus(100, "READY");
-            document.getElementById('start-node').style.display = 'inline-block';
+            setStatus(100, "READY");
+            document.getElementById('enter-node').style.display = 'block';
         } catch (e) {
-            updateStatus(0, "网络连接失败，请刷新");
+            setStatus(0, "NETWORK ERROR - RETRY");
+            console.error(e);
         }
     }
 
     function setupThree() {
         scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+        scene.fog = new THREE.FogExp2(0x0a0a0c, 0.012);
+        
+        camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 1, 1000);
         camera.position.set(0, 5, 55);
 
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+        renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        // 画质优化：开启适配移动端的高清渲染比
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
+        renderer.toneMapping = THREE.ReinhardToneMapping;
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        mainGroup = new THREE.Group();
-        scene.add(mainGroup);
+        scene.add(mainTreeGroup);
+        scene.add(photoGroup);
 
-        // 参考效果图：混合粒子效果
-        const geometries = [
-            new THREE.IcosahedronGeometry(0.18, 0), // 碎钻
-            new THREE.OctahedronGeometry(0.12, 0),   // 星芒
-            new THREE.SphereGeometry(0.08, 4, 4)    // 极细光点
-        ];
-        
-        const mat = new THREE.MeshStandardMaterial({ 
-            color: 0xffd700, 
-            emissive: 0xaa8800, 
-            metalness: 1, 
-            roughness: 0 
+        // 参照图效果：创建多态精致粒子
+        const geometries = [new THREE.IcosahedronGeometry(0.18, 0), new THREE.OctahedronGeometry(0.2, 0)];
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0xffd700, emissive: 0xffaa00, emissiveIntensity: 0.8, metalness: 1, roughness: 0 
         });
 
-        for (let i = 0; i < 3500; i++) {
-            const mesh = new THREE.Mesh(geometries[i%3], mat);
-            const r = Math.pow(Math.random(), 1.2);
-            const y = r * 28 - 14;
+        for (let i = 0; i < 3200; i++) {
+            const mesh = new THREE.Mesh(geometries[i%2], material);
+            const ratio = Math.pow(Math.random(), 1.3);
+            const y = ratio * 28 - 14;
             const radius = (14 - y) * 0.38;
-            const a = r * 40 + Math.random() * Math.PI * 2;
+            const angle = ratio * 45 + Math.random() * Math.PI * 2;
             
             particles.push({
                 mesh,
-                tree: new THREE.Vector3(Math.cos(a)*radius, y, Math.sin(a)*radius),
-                scatter: new THREE.Vector3().setFromSphericalCoords(25 + Math.random()*20, Math.random()*Math.PI, Math.random()*Math.PI*2),
-                speed: 0.04 + Math.random() * 0.06
+                tree: new THREE.Vector3(Math.cos(angle)*radius, y, Math.sin(angle)*radius),
+                cloud: new THREE.Vector3().setFromSphericalCoords(25 + Math.random()*20, Math.random()*Math.PI, Math.random()*Math.PI*2),
+                speed: 0.03 + Math.random()*0.04
             });
-            mesh.position.copy(particles[i].scatter);
-            mainGroup.add(mesh);
+            mesh.position.copy(particles[i].cloud);
+            mainTreeGroup.add(mesh);
         }
 
-        // 后期处理：金色辉光
-        const renderPass = new RenderPass(scene, camera);
-        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.6, 0.4, 0.85);
-        composer = new EffectComposer(renderer);
-        composer.addPass(renderPass);
-        composer.addPass(bloomPass);
-
         scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+        const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.6, 0.4, 0.88);
+        composer = new EffectComposer(renderer);
+        composer.addPass(new RenderPass(scene, camera));
+        composer.addPass(bloom);
+
+        // 高画质图片上传处理
+        document.getElementById('pic-up').addEventListener('change', (e) => {
+            Array.from(e.target.files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const loader = new THREE.TextureLoader();
+                    loader.load(ev.target.result, (tex) => {
+                        // 画质增强：锐度处理与各项异性过滤
+                        tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                        tex.colorSpace = THREE.SRGBColorSpace;
+                        
+                        const m = new THREE.Mesh(
+                            new THREE.PlaneGeometry(6, 7.5),
+                            new THREE.MeshBasicMaterial({ map: tex, side: 2, transparent: true })
+                        );
+                        m.position.set((Math.random()-0.5)*30, (Math.random()-0.5)*20, (Math.random()-0.5)*15);
+                        photoGroup.add(m);
+                        photoObjects.push({ m, orig: m.position.clone() });
+                    });
+                };
+                reader.readAsDataURL(file);
+            });
+        });
     }
 
-    window.activateSystem = async () => {
-        videoElement = document.getElementById('v-preview');
-        updateStatus(100, "正在连接相机...");
-        
+    let photoObjects = [];
+    window.activateApp = async () => {
+        video = document.getElementById('v-preview');
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ 
-                audio: false, 
-                video: { facingMode: "user", width: 640, height: 480 } 
-            });
-            videoElement.srcObject = stream;
-            
-            videoElement.onloadedmetadata = () => {
-                videoElement.play();
-                videoElement.style.display = "block";
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = stream;
+            video.onloadedmetadata = () => {
+                video.play();
+                video.style.display = "block";
                 document.getElementById('loading-screen').style.opacity = '0';
-                setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 1000);
+                setTimeout(()=>document.getElementById('loading-screen').style.display='none', 600);
             };
-
-            await bgm.play();
-            
+            // 在此按钮点击中激活音频，避开 iOS 禁止自动播放限制
+            bgm.play();
             runAI();
             animate();
-        } catch (err) {
-            alert("请授予相机权限以开始体验");
+        } catch (e) {
+            alert("请授予相机权限以开始 3D 交互");
         }
     };
 
-    // 画质优化后的照片上传
-    document.getElementById('photo-in').addEventListener('change', (e) => {
-        Array.from(e.target.files).forEach(f => {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                const img = new Image();
-                img.src = ev.target.result;
-                img.onload = () => {
-                    const tex = new THREE.Texture(img);
-                    tex.colorSpace = THREE.SRGBColorSpace;
-                    // 开启画质增强：各向异性过滤
-                    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                    tex.needsUpdate = true;
-                    
-                    // 创建拍立得风格相框
-                    const container = new THREE.Group();
-                    
-                    // 1. 照片本身
-                    const pGeo = new THREE.PlaneGeometry(6, 7.5);
-                    const pMat = new THREE.MeshBasicMaterial({ map: tex });
-                    const pMesh = new THREE.Mesh(pGeo, pMat);
-                    container.add(pMesh);
-                    
-                    // 2. 白色相框背景
-                    const fGeo = new THREE.PlaneGeometry(6.6, 9);
-                    const fMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-                    const fMesh = new THREE.Mesh(fGeo, fMat);
-                    fMesh.position.z = -0.05;
-                    fMesh.position.y = -0.5;
-                    container.add(fMesh);
-
-                    container.position.set((Math.random()-0.5)*30, (Math.random()-0.5)*20, (Math.random()-0.5)*15);
-                    scene.add(container);
-                    photoObjects.push({ mesh: container, orig: container.position.clone() });
-                };
-            };
-            reader.readAsDataURL(f);
-        });
-    });
-
     function runAI() {
-        if (handLandmarker && videoElement.readyState >= 2) {
-            const res = handLandmarker.detectForVideo(videoElement, performance.now());
+        if (landmarker && video.readyState >= 2) {
+            const res = landmarker.detectForVideo(video, performance.now());
             if (res.landmarks?.length > 0) {
-                const dist = Math.hypot(res.landmarks[0][4].x - res.landmarks[0][8].x, res.landmarks[0][4].y - res.landmarks[0][8].y);
+                const lm = res.landmarks[0];
+                const d = Math.hypot(lm[4].x - lm[8].x, lm[4].y - lm[8].y);
                 
-                // 修正：捏合手指（距离小）为抓取形态
-                if (dist < 0.05) mode = 'GRAB'; 
-                else if (dist > 0.15) mode = 'SCATTER';
+                // 修正：捏合为抓取（FOCUS），张开为树/星云
+                if (d < 0.055) mode = 'FOCUS'; 
+                else if (d > 0.16) mode = 'SCATTER';
                 else mode = 'TREE';
             }
         }
@@ -237,31 +232,35 @@
         const t = clock.getElapsedTime();
         
         particles.forEach((p, i) => {
-            const dest = (mode === 'GRAB') ? p.tree : p.scatter;
+            const dest = (mode === 'SCATTER' || mode === 'FOCUS') ? p.cloud : p.tree;
             p.mesh.position.lerp(dest, 0.06);
-            
-            // 粒子呼吸动效
-            p.mesh.material.emissiveIntensity = 0.5 + Math.sin(t * 3 + i) * 0.4;
-            p.mesh.scale.setScalar(1 + Math.sin(t * 4 + i) * 0.1);
+            p.mesh.scale.setScalar(1 + Math.sin(t*3 + i)*0.15);
+            p.mesh.material.emissiveIntensity = 0.5 + Math.sin(t*2 + i)*0.4;
         });
 
         photoObjects.forEach(p => {
-            if (mode === 'GRAB') {
-                // 抓取到镜头前
-                const camForward = new THREE.Vector3(0,0,-18).applyQuaternion(camera.quaternion).add(camera.position);
-                p.mesh.position.lerp(camForward, 0.12);
-                p.mesh.lookAt(camera.position);
+            if (mode === 'FOCUS') {
+                const target = new THREE.Vector3(0, 1, -18).applyQuaternion(camera.quaternion).add(camera.position);
+                p.m.position.lerp(target, 0.12);
+                p.m.lookAt(camera.position);
             } else {
-                p.mesh.position.lerp(p.orig, 0.06);
-                p.mesh.rotation.z = Math.sin(t * 0.5) * 0.1;
+                p.m.position.lerp(p.orig, 0.05);
+                p.m.rotation.y += 0.01;
             }
         });
 
-        mainGroup.rotation.y += 0.003;
+        mainTreeGroup.rotation.y += 0.003;
         composer.render();
     }
 
-    window.toggleAudio = () => bgm.paused ? bgm.play() : bgm.pause();
+    window.handleMusic = () => bgm.paused ? bgm.play() : bgm.pause();
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth/window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        composer.setSize(window.innerWidth, window.innerHeight);
+    });
+
     init();
 </script>
 </body>
